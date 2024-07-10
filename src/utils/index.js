@@ -2,6 +2,7 @@
 // 例如别人在应用request只需要  import { request } from "@/utils"
 import { request } from "./request"
 
+export * from './token'
 export {
   request
 }
