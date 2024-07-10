@@ -1,5 +1,5 @@
 import { getUserProfileAPI, postLoginAPI } from "@/apis/user"
-import { getToken, request, setToken as _setToken, removeToken } from "@/utils"
+import { getToken, setToken as _setToken, removeToken } from "@/utils"
 import { createSlice } from "@reduxjs/toolkit"
 
 const userStore = createSlice({
