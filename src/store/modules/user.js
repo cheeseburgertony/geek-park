@@ -1,3 +1,4 @@
+import { getUserProfileAPI, postLoginAPI } from "@/apis/user"
 import { getToken, request, setToken as _setToken, removeToken } from "@/utils"
 import { createSlice } from "@reduxjs/toolkit"
 
@@ -33,7 +34,7 @@ const userReducer = userStore.reducer
 // 异步方法
 const fetchLogin = (data) => {
   return async (dispatch) => {
-    const res = await request.post('/v1_0/authorizations', data)
+    const res = await postLoginAPI(data)
     dispatch(setToken(res.data.token))
   }
 }
@@ -41,7 +42,7 @@ const fetchLogin = (data) => {
 // 获取用户信息异步方法
 const fetchUserInfo = () => {
   return async (dispatch) => {
-    const res = await request.get('/v1_0/user/profile')
+    const res = await getUserProfileAPI()
     dispatch(setUserInfo(res.data))
   }
 }
