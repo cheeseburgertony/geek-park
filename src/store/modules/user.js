@@ -24,7 +24,7 @@ const userReducer = userStore.reducer
 // 异步方法
 const fetchLogin = (data) => {
   return async (dispatch) => {
-    const res = await request.post('/authorizations', data)
+    const res = await request.post('/v1_0/authorizations', data)
     dispatch(setToken(res.data.token))
   }
 }
