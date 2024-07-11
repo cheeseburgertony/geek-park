@@ -15,7 +15,7 @@ import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useState } from 'react'
-import { getChannelsAPI } from '@/apis/article'
+import { getChannelsAPI, postCreateArticlesAPI } from '@/apis/article'
 
 const { Option } = Select
 
@@ -30,6 +30,21 @@ const Publish = () => {
     }
     getChannelsData()
   }, [])
+
+  // 收集表单(发布文章)
+  const onFinish = (formData) => {
+    const { channel_id, content, title } = formData
+    const reqData = {
+      title,
+      content,
+      cover: {
+        type: 0,
+        images: []
+      },
+      channel_id
+    }
+    postCreateArticlesAPI(reqData)
+  }
 
   return (
     <div className="publish">
@@ -46,6 +61,7 @@ const Publish = () => {
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 1 }}
+          onFinish={onFinish}
         >
           <Form.Item
             label="标题"
