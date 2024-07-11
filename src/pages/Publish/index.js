@@ -11,12 +11,12 @@ import {
   message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useRef, useState } from 'react'
-import { postCreateArticlesAPI } from '@/apis/article'
+import { useEffect, useRef, useState } from 'react'
+import { getArticleDetailByIdAPI, postCreateArticlesAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
@@ -25,8 +25,10 @@ const Publish = () => {
   // 频道列表
   const { channelList } = useChannel()
 
+  // 获取Form实例
+  const [form] = Form.useForm()
+
   // 收集表单(发布文章)
-  const formRef = useRef(null)
   const onFinish = async (formData) => {
     // 进行选择的图片类型和图片数量进行校验
     if (imageType !== imageList.length) return message.warning('封面类型和图片数量不匹配')
@@ -43,7 +45,7 @@ const Publish = () => {
     await postCreateArticlesAPI(reqData)
     message.success('发布成功')
     // 发布成功后重置表单
-    formRef.current.resetFields()
+    form.resetFields()
   }
 
   // 上传图片
@@ -57,6 +59,21 @@ const Publish = () => {
   const onTypeChange = (e) => {
     setImageType(e.target.value)
   }
+
+
+  // 获取地址栏查询参数
+  const [searchParams] = useSearchParams()
+  const articleId = searchParams.get('id')
+  console.log(articleId);
+  // 数据回显
+  useEffect(() => {
+    const getArticleDetailByIdData = async () => {
+      const res = await getArticleDetailByIdAPI(articleId)
+      // 调用表单自己的方法传入数据会自动进行数据回显
+      form.setFieldsValue(res.data)
+    }
+    getArticleDetailByIdData()
+  }, [articleId, form])
 
   return (
     <div className="publish">
@@ -74,7 +91,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
           onFinish={onFinish}
-          ref={formRef}
+          form={form}
         >
           <Form.Item
             label="标题"
