@@ -14,3 +14,6 @@ export const deleteArticlesAPI = (id) => request.delete(`/v1_0/mp/articles/${id}
 
 // 获取文章详情
 export const getArticleDetailByIdAPI = (id) => request.get(`/v1_0/mp/articles/${id}`)
+
+// 编辑文章
+export const putUpdateArticlesAPI = (id, data) => request.put(`/v1_0/mp/articles/${id}?draft=false`, data)

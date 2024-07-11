@@ -11,12 +11,12 @@ import {
   message
 } from 'antd'
 import { PlusOutlined } from '@ant-design/icons'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
 import { useEffect, useState } from 'react'
-import { getArticleDetailByIdAPI, postCreateArticlesAPI } from '@/apis/article'
+import { getArticleDetailByIdAPI, postCreateArticlesAPI, putUpdateArticlesAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 
 const { Option } = Select
@@ -29,6 +29,7 @@ const Publish = () => {
   const [form] = Form.useForm()
 
   // 收集表单(发布文章)
+  const navigate = useNavigate()
   const onFinish = async (formData) => {
     // 进行选择的图片类型和图片数量进行校验
     if (imageType !== imageList.length) return message.warning('封面类型和图片数量不匹配')
@@ -38,14 +39,27 @@ const Publish = () => {
       content,
       cover: {
         type: imageType,
-        images: imageList.map(item => item.response.data.url)
+        images: imageList.map(item => {
+          // 更新和新增的url获取可能不同，这里做适配
+          if (item.response) {
+            return item.response.data.url
+          } else {
+            return item.url
+          }
+        })
       },
       channel_id
     }
-    await postCreateArticlesAPI(reqData)
-    message.success('发布成功')
+    if (articleId) {
+      await putUpdateArticlesAPI(articleId, reqData)
+    } else {
+      await postCreateArticlesAPI(reqData)
+    }
+    articleId ? message.success('编辑成功') : message.success('发布成功')
     // 发布成功后重置表单
     form.resetFields()
+    // 跳转到文章列表
+    navigate('/article')
   }
 
   // 上传图片
@@ -60,11 +74,9 @@ const Publish = () => {
     setImageType(e.target.value)
   }
 
-
   // 获取地址栏查询参数
   const [searchParams] = useSearchParams()
   const articleId = searchParams.get('id')
-  console.log(articleId);
   // 数据回显
   useEffect(() => {
     const getArticleDetailByIdData = async () => {
