@@ -8,3 +8,6 @@ export const postCreateArticlesAPI = (data) => request.post('/v1_0/mp/articles?d
 
 // 获取文章列表
 export const getArticlesListAPI = (params) => request.get('/v1_0/mp/articles', { params })
+
+// 删除文章
+export const deleteArticlesAPI = (id) => request.delete(`/v1_0/mp/articles/${id}`)
