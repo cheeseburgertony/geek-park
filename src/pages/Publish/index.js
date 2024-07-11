@@ -80,7 +80,10 @@ const Publish = () => {
       // 重新设置imageList数据
       setImageList(cover.images.map(item => ({ url: item })))
     }
-    getArticleDetailByIdData()
+    // 有id时再进行调用
+    if (articleId) {
+      getArticleDetailByIdData()
+    }
   }, [articleId, form])
 
   return (
@@ -89,7 +92,7 @@ const Publish = () => {
         title={
           <Breadcrumb items={[
             { title: <Link to={'/'}>首页</Link> },
-            { title: '发布文章' },
+            { title: `${articleId ? '编辑' : '发布'}文章` },
           ]}
           />
         }
