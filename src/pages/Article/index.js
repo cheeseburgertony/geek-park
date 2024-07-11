@@ -75,17 +75,39 @@ const Article = () => {
   // 频道列表
   const { channelList } = useChannel()
 
+  // 请求参数
+  const [reqData, setReqData] = useState({
+    status: '',
+    channel_id: '',
+    begin_pubdate: '',
+    end_pubdate: '',
+    page: 1,
+    per_page: 4
+  })
+
   // 获取文章列表
   const [list, setList] = useState([])
   const [count, setCount] = useState(0)
   useEffect(() => {
     const getArticlesListData = async () => {
-      const res = await getArticlesListAPI()
+      // 请求参数改变时就会触发
+      const res = await getArticlesListAPI(reqData)
       setList(res.data.results)
       setCount(res.data.total_count)
     }
     getArticlesListData()
-  }, [])
+  }, [reqData])
+
+  // 收集筛选表单数据
+  const onFinish = (formData) => {
+    setReqData({
+      ...reqData,
+      status: formData.status,
+      channel_id: formData.channel_id,
+      begin_pubdate: formData.date[0].format('YYYY-MM-DD'),
+      end_pubdate: formData.date[1].format('YYYY-MM-DD')
+    })
+  }
 
   return (
     <div>
@@ -98,7 +120,7 @@ const Article = () => {
         }
         style={{ marginBottom: 20 }}
       >
-        <Form initialValues={{ status: '' }}>
+        <Form initialValues={{ status: '' }} onFinish={onFinish}>
           <Form.Item label="状态" name="status">
             <Radio.Group>
               <Radio value={''}>全部</Radio>
