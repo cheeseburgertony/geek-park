@@ -15,7 +15,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getArticleDetailByIdAPI, postCreateArticlesAPI } from '@/apis/article'
 import { useChannel } from '@/hooks/useChannel'
 
@@ -69,8 +69,16 @@ const Publish = () => {
   useEffect(() => {
     const getArticleDetailByIdData = async () => {
       const res = await getArticleDetailByIdAPI(articleId)
+      const data = res.data
+      const { cover } = data
       // 调用表单自己的方法传入数据会自动进行数据回显
-      form.setFieldsValue(res.data)
+      form.setFieldsValue({
+        ...data,
+        type: cover.type
+      })
+      setImageType(cover.type)
+      // 重新设置imageList数据
+      setImageList(cover.images.map(item => ({ url: item })))
     }
     getArticleDetailByIdData()
   }, [articleId, form])
@@ -131,6 +139,7 @@ const Publish = () => {
               name='image'
               onChange={onChange}
               maxCount={imageType}
+              fileList={imageList}
             >
               <div style={{ marginTop: 8 }}>
                 <PlusOutlined />
