@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Card, Breadcrumb, Form, Button, Radio, DatePicker, Select, Popconfirm, message } from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { Table, Tag, Space } from 'antd'
@@ -13,6 +13,8 @@ const { RangePicker } = DatePicker
 
 
 const Article = () => {
+  const navigate = useNavigate()
+
   // 准备列数据
   // 枚举状态数据
   const state = {
@@ -59,7 +61,7 @@ const Article = () => {
       render: data => {
         return (
           <Space size="middle">
-            <Button type="primary" shape="circle" icon={<EditOutlined />} />
+            <Button type="primary" shape="circle" icon={<EditOutlined />} onClick={() => navigate(`/publish?id=${data.id}`)} />
             <Popconfirm
               title="删除文章"
               description="是否删除此文章？"
