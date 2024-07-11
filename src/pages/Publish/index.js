@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import './index.scss'
 import ReactQuill from 'react-quill'
 import 'react-quill/dist/quill.snow.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { getChannelsAPI, postCreateArticlesAPI } from '@/apis/article'
 
 const { Option } = Select
@@ -33,6 +33,7 @@ const Publish = () => {
   }, [])
 
   // 收集表单(发布文章)
+  const formRef = useRef(null)
   const onFinish = async (formData) => {
     // 进行选择的图片类型和图片数量进行校验
     if (imageType !== imageList.length) return message.warning('封面类型和图片数量不匹配')
@@ -48,6 +49,8 @@ const Publish = () => {
     }
     await postCreateArticlesAPI(reqData)
     message.success('发布成功')
+    // 发布成功后重置表单
+    formRef.current.resetFields()
   }
 
   // 上传图片
@@ -78,6 +81,7 @@ const Publish = () => {
           wrapperCol={{ span: 16 }}
           initialValues={{ type: 0 }}
           onFinish={onFinish}
+          ref={formRef}
         >
           <Form.Item
             label="标题"
